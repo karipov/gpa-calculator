@@ -21,10 +21,25 @@ subjects = ["Math", "English","History", "Geography", "Sociology", "Economics", 
 total_score = 0
 subject_count = 0
 
+print("""Hello. This script will measure your GPA on a 4.0 scale. Please enter
+alphabetical grades and do not enter anything for classes you do not take.
+""")
+
 for i in subjects:
-    score = input(i + ": ")
-    if score != "":
-        total_score += grades[score]
-        subject_count += 1
+    while True:
+        try:
+            score = input(i + ": ")
+            if (score not in grades) and (score != ""):
+                raise ValueError
+            try:
+                total_score += grades[score]
+                subject_count += 1
+            except KeyError:
+                pass
+            break
+        except ValueError:
+            print("Please enter a correct grade!")
+
+
 
 print("Your GPA is: {0:.2f}".format(total_score/subject_count))
