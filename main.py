@@ -1,3 +1,4 @@
+# dict and list for grade values and classes
 grades = {
     "A+": 4.33,
     "A": 4.00,
@@ -18,25 +19,26 @@ grades = {
 subjects = ["Math", "English","History", "Geography", "Sociology", "Economics", "Biology", "Physics", "Chemistry", "Computer Science", "Sport Science", "Drama", "Art", "Spanish",
 "German", "French", "Mandarin", "Italian"]
 
+# incrementing variables for calculating the average GPA
 total_score = 0
-subject_count = 0
+subject_count = 0 # not all students take all the classes
 
 print("""Hello. This script will measure your GPA on a 4.0 scale. Please enter
 alphabetical grades and do not enter anything for classes you do not take.
 """)
 
-for i in subjects:
-    while True:
+for subject in subjects:
+    while True: # run until the user enters correct information
         try:
-            score = input(i + ": ")
+            score = input(subject + ": ")
             if (score not in grades) and (score != ""):
-                raise ValueError
+                raise ValueError # empty value is stll correct
             try:
                 total_score += grades[score]
                 subject_count += 1
-            except KeyError:
+            except KeyError: # if the value is empty, pass.
                 pass
-            break
+            break # break out of the WHILE TRUE
         except ValueError:
             print("Please enter a correct grade!")
 
