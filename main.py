@@ -1,47 +1,43 @@
-# dict and list for grade values and classes
-grades = {
-    "A+": 4.33,
-    "A": 4.00,
-    "A-": 3.67,
-    "B+": 3.33,
-    "B": 3.00,
-    "B-": 2.67,
-    "C+": 2.33,
-    "C": 2.00,
-    "C-": 1.67,
-    "D+": 1.33,
-    "D": 1.00,
-    "D-": 0.67,
-    "F": 0.33,
-    "U": 0.00
-}
+import telebot
+import config
+import dbhandler
+from textparser import check_entry, parse_entry
 
-subjects = ["Math", "English","History", "Geography", "Sociology", "Economics", "Biology", "Physics", "Chemistry", "Computer Science", "Sport Science", "Drama", "Art", "Spanish",
-"German", "French", "Mandarin", "Italian"]
+bot = telebot.TeleBot(config.KEY)
 
-# incrementing variables for calculating the average GPA
-total_score = 0
-subject_count = 0 # not all students take all the classes
+def calculate_gpa(subject_list):
+    grade_list = [x[1] for x in subject_list] # no need for subject names
 
-print("""Hello. This script will measure your GPA on a 4.0 scale. Please enter
-alphabetical grades and do not enter anything for classes you do not take.
-""")
+    total_gpa = 0 # a counter
+    for grade in grade_list:
+        total_gpa += config.GRADES[grade]
 
-for subject in subjects:
-    while True: # run until the user enters correct information
-        try:
-            score = input(subject + ": ")
-            if (score not in grades) and (score != ""):
-                raise ValueError # empty value is stll correct
-            try:
-                total_score += grades[score]
-                subject_count += 1
-            except KeyError: # if the value is empty, pass.
-                pass
-            break # break out of the WHILE TRUE
-        except ValueError:
-            print("Please enter a correct grade!")
+    return total_gpa / len(grade_list) # average GPA
 
 
+@bot.message_handler(commands=['start']) # IDEA: FORCE REPLY??
+def send_start(message):
+    bot.send_message(message.chat.id, config.ENTER_REPLY, parse_mode='HTML')
 
-print("Your GPA is: {0:.2f}".format(total_score/subject_count))
+@bot.message_handler(func=lambda m: '-' in m.text, content_types=['text'])
+def record_results(message):
+    if not check_entry(message.text):
+        bot.send_message(message.chat.id, config.INCORRECT_REPLY)
+        return # no need to add the message to db as it is incorrect
+
+    subject_list = parse_entry(message.text)
+    subject, grade = subject_list # unpack the list to insert into function
+    dbhandler.create_table(message)
+    dbhandler.write_table(subject, grade, message)
+
+
+@bot.message_handler(commands=['done'])
+def send_results(message):
+    data = dbhandler.pull_data(message)
+    average_GPA = str(round(calculate_gpa(data), 2)) # GPA is 2 d.p.
+
+    bot.send_message(message.chat.id, config.GPA_REPLY.format(average_GPA))
+
+    dbhandler.delete_table(message) # so user can enter new classes next time
+
+bot.polling()
