@@ -4,6 +4,7 @@ conn = sqlite3.connect('user_classes.db', check_same_thread=False)
 c = conn.cursor()
 
 def create_table(message):
+    """Create a table within a database based on user ID."""
     uid = message.from_user.id
     query = "CREATE TABLE IF NOT EXISTS user" + str(uid) + "(class TEXT, grade TEXT)"
 
@@ -11,6 +12,7 @@ def create_table(message):
     conn.commit()
 
 def write_table(subject, grade, message):
+    """Insert values into a user table within a database."""
     subject = ''.join(subject) # since both variables come as lists
     grade = ''.join(grade)
     uid = message.from_user.id
@@ -20,6 +22,7 @@ def write_table(subject, grade, message):
     conn.commit()
 
 def delete_table(message):
+    """Delete table for user with user_id"""
     uid = message.from_user.id
     query = "DROP TABLE IF EXISTS user" + str(uid)
 
@@ -27,6 +30,7 @@ def delete_table(message):
     conn.commit()
 
 def pull_data(message):
+    """ Pull data from user table if it exists."""
     uid = message.chat.id
     query = "SELECT * FROM user" + str(uid)
     check_table_query = "SELECT name FROM sqlite_master WHERE name = \'user" + str(uid) + "' and type='table'"
