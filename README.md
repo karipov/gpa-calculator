@@ -7,6 +7,7 @@ Install all the dependencies with:
 `pip install -r requirements.txt`
 
 Also, you will need to create a `config.py` file with `API` variable
+for the telegram bot API key.
 
 ## How to run
 Linux: `python3 main.py`
