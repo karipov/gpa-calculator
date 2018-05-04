@@ -22,7 +22,7 @@ def send_start(message):
 @bot.message_handler(func=lambda m: '-' in m.text, content_types=['text'])
 def record_results(message):
     if not check_entry(message.text):
-        bot.send_message(message.chat.id, config.INCORRECT_REPLY)
+        bot.send_message(message.chat.id, config.FORMAT_REPLY)
         return # no need to add the message to db as it is incorrect
 
     subject_list = parse_entry(message.text)
@@ -34,6 +34,11 @@ def record_results(message):
 @bot.message_handler(commands=['done'])
 def send_results(message):
     data = dbhandler.pull_data(message)
+
+    if not data:
+        bot.send_message(message.chat.id, config.EMPTY_REPLY)
+        return
+        
     average_GPA = str(round(calculate_gpa(data), 2)) # GPA is 2 d.p.
 
     bot.send_message(message.chat.id, config.GPA_REPLY.format(average_GPA))

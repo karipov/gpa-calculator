@@ -29,10 +29,17 @@ def delete_table(message):
 def pull_data(message):
     uid = message.chat.id
     query = "SELECT * FROM user" + str(uid)
+    check_table_query = "SELECT name FROM sqlite_master WHERE name = \'user" + str(uid) + "' and type='table'"
+
+    c.execute(check_table_query)
+
+    if not c.fetchall():
+        return []
 
     c.execute(query)
 
     data = []
     for entry in c.fetchall():
         data.append(list(entry)) # turn tuples into lists (because I like lists)
+
     return data

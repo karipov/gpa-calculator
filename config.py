@@ -1,4 +1,4 @@
-KEY = "401541833:AAEA9kuOUSfxltZi7MNb0FdK5FORB6UKkQU"
+KEY = "401541833:AAGBq4jHNiUpJ8vNjQTIb0twgSYz7YB3A-0"
 
 GRADES = {
     "A+": 4.33,
@@ -22,6 +22,7 @@ in the following manner: <code>CLASSNAME - GRADE</code>.\n\n\
 For example: <code>English - A</code>.\n\n\
 Enter /done when done :)"
 
-INCORRECT_REPLY = "Incorrect Format!"
+FORMAT_REPLY = "Incorrect Format!"
+EMPTY_REPLY = "You have not entered any grades!"
 
 GPA_REPLY = "Yout total GPA is: {0}"
